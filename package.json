@@ -1,0 +1,36 @@
+{
+  "name": "@managed-oss/intakeforge",
+  "version": "0.1.0",
+  "description": "Accessible versioned forms with deterministic logic, privacy controls, corrections, and grounded summaries.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rohanarun/intakeforge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rohanarun/intakeforge/issues"
+  },
+  "homepage": "https://github.com/rohanarun/intakeforge#readme",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "bin": {
+    "intakeforge": "src/cli.mjs",
+    "intakeforge-mcp": "src/mcp.mjs"
+  },
+  "files": [
+    "src",
+    "web",
+    "product-manifest.json",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md",
+    "Dockerfile"
+  ],
+  "scripts": {
+    "start": "node src/web-server.mjs",
+    "test": "node --test --test-concurrency=1",
+    "verify": "node scripts/verify-manifest.mjs && node --test --test-concurrency=1"
+  }
+}

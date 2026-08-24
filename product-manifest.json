@@ -1,0 +1,1065 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "productVersion": "0.1.0",
+    "backendRelease": "v0.4.2",
+    "backendCommit": "20c4a704c77cbbbff1da995e1d91b937625a8aa4",
+    "backendSourceSnapshotSha256": "d0b7b1079d4924eb7369c788a979a707d45bb63470290e6ac33ee5662d78f69f",
+    "generatedAt": "2026-08-24T00:00:00.000Z",
+    "generator": "managed-oss-cloud/scripts/generate-product-repositories.mjs"
+  },
+  "product": {
+    "slug": "intakeforge",
+    "command": "intakeforge",
+    "mcpPrefix": "intakeforge",
+    "environmentPrefix": "INTAKEFORGE",
+    "name": "IntakeForge",
+    "tagline": "Accessible versioned forms with deterministic logic, privacy controls, corrections, and grounded summaries.",
+    "repository": "https://github.com/rohanarun/intakeforge",
+    "license": "MIT",
+    "accent": "#ef84b4",
+    "accentDark": "#98436b"
+  },
+  "module": {
+    "id": "forms",
+    "category": "Data collection",
+    "description": "Accessible versioned forms with deterministic logic, exact-release validation, corrections, privacy classes, and bounded exports.",
+    "minimumHostedPlan": "starter",
+    "resourceClass": "shared",
+    "recordTypes": [
+      "form",
+      "form-release",
+      "submission",
+      "submission-version",
+      "result-view",
+      "export",
+      "rights-request"
+    ],
+    "aiCapabilities": [
+      "draft review-only forms",
+      "summarize aggregate results",
+      "suggest cited form improvements"
+    ],
+    "scaleGuidance": "Use Scale for high submission or upload volume, many public domains and locales, frequent exports, or long retention.",
+    "externalUsage": [
+      "customer object storage",
+      "customer malware scanner",
+      "customer email provider",
+      "customer webhook provider"
+    ]
+  },
+  "backend": {
+    "defaultUrl": "https://cloud.getsupers.com",
+    "workspaceEndpoint": "/api/suite/workspace",
+    "actionEndpointPattern": "/api/suite/modules/forms/actions/{actionId}",
+    "authentication": "Bearer API token",
+    "databaseBoundary": "All shared database access and tenant isolation remain behind the managed-oss-cloud API."
+  },
+  "cleanRoom": {
+    "statement": "Original clean-room implementation of the data collection software category, designed and written independently.",
+    "sourceBoundary": "Public category behavior informed requirements; implementation and product identity are original."
+  },
+  "actions": [
+    {
+      "id": "form-create",
+      "moduleId": "forms",
+      "title": "Create form",
+      "description": "Create a tenant-scoped form shell before drafting immutable releases.",
+      "operation": "create",
+      "recordType": "form",
+      "titleField": "name",
+      "resultingState": "draft",
+      "requiredFields": [
+        "name"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form name, stored as non-empty plain text.",
+            "examples": [
+              "Sample Form name"
+            ],
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_form_create",
+      "productMcpToolName": "intakeforge_form_create",
+      "productCliExample": "intakeforge action form-create '{\"name\":\"Sample Form name\"}'",
+      "exampleInput": {
+        "name": "Sample Form name"
+      }
+    },
+    {
+      "id": "form-list",
+      "moduleId": "forms",
+      "title": "List forms",
+      "description": "List tenant-scoped forms without respondent values.",
+      "operation": "read",
+      "recordType": "form",
+      "requiredFields": [],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_form_list",
+      "productMcpToolName": "intakeforge_form_list",
+      "productCliExample": "intakeforge action form-list '{}'",
+      "exampleInput": {}
+    },
+    {
+      "id": "form-draft",
+      "moduleId": "forms",
+      "title": "Draft form release",
+      "description": "Create an immutable form-release draft containing bounded schema and deterministic logic.",
+      "operation": "command",
+      "recordType": "form-release",
+      "requiredFields": [
+        "formId",
+        "title",
+        "schema",
+        "logic"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "formId",
+          "title",
+          "schema",
+          "logic"
+        ],
+        "properties": {
+          "formId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form release title.",
+            "examples": [
+              "Contact request"
+            ],
+            "maxLength": 200
+          },
+          "schema": {
+            "type": "object",
+            "description": "Versioned bounded form schema.",
+            "required": [],
+            "properties": {
+              "version": {
+                "description": "Optional schema version metadata; the current validator canonicalizes releases to version one.",
+                "examples": [
+                  1
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Form field definitions.",
+                "items": {
+                  "type": "object",
+                  "description": "Bounded form field definition.",
+                  "required": [
+                    "key",
+                    "type",
+                    "purpose",
+                    "privacy"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Stable form field key.",
+                      "examples": [
+                        "sample-key"
+                      ],
+                      "pattern": "^[a-z][a-z0-9-]{1,79}$",
+                      "maxLength": 80
+                    },
+                    "type": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Supported form field type.",
+                      "examples": [
+                        "short-text"
+                      ],
+                      "enum": [
+                        "short-text",
+                        "long-text",
+                        "boolean",
+                        "integer",
+                        "decimal",
+                        "date",
+                        "date-time",
+                        "choice",
+                        "multi-choice",
+                        "email",
+                        "url"
+                      ]
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "description": "Whether a response value is required.",
+                      "examples": [
+                        false
+                      ]
+                    },
+                    "purpose": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Plain-language collection purpose.",
+                      "examples": [
+                        "Respond to the inquiry."
+                      ]
+                    },
+                    "privacy": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Field privacy classification.",
+                      "examples": [
+                        "internal"
+                      ],
+                      "enum": [
+                        "public",
+                        "internal",
+                        "restricted"
+                      ]
+                    },
+                    "choices": {
+                      "type": "array",
+                      "description": "Allowed choice values.",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Choice label.",
+                        "examples": [
+                          "Yes"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 100,
+                      "examples": [
+                        [
+                          "Yes",
+                          "No"
+                        ]
+                      ]
+                    }
+                  },
+                  "additionalProperties": false,
+                  "examples": [
+                    {
+                      "key": "message",
+                      "type": "short-text",
+                      "required": true,
+                      "purpose": "Respond to the inquiry.",
+                      "privacy": "internal"
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 200,
+                "examples": [
+                  [
+                    {
+                      "key": "message",
+                      "type": "short-text",
+                      "required": true,
+                      "purpose": "Respond to the inquiry.",
+                      "privacy": "internal"
+                    }
+                  ]
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "examples": [
+              {
+                "version": 1,
+                "fields": [
+                  {
+                    "key": "message",
+                    "type": "short-text",
+                    "required": true,
+                    "purpose": "Respond to the inquiry.",
+                    "privacy": "internal"
+                  }
+                ]
+              }
+            ]
+          },
+          "logic": {
+            "type": "array",
+            "description": "Zero to 200 acyclic declarative form-logic rules.",
+            "items": {
+              "type": "object",
+              "description": "Safe conditional form-logic rule. Additional declarative metadata is retained.",
+              "required": [
+                "when",
+                "effect",
+                "target"
+              ],
+              "properties": {
+                "when": {
+                  "type": "object",
+                  "description": "Declarative condition object.",
+                  "additionalProperties": true,
+                  "examples": [
+                    {
+                      "field": "message",
+                      "equals": "hello"
+                    }
+                  ]
+                },
+                "effect": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Supported logic effect.",
+                  "examples": [
+                    "show"
+                  ],
+                  "enum": [
+                    "show",
+                    "hide",
+                    "require"
+                  ]
+                },
+                "target": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Target form field key.",
+                  "examples": [
+                    "sample-key"
+                  ],
+                  "pattern": "^[a-z][a-z0-9-]{1,79}$",
+                  "maxLength": 80
+                }
+              },
+              "additionalProperties": true,
+              "examples": [
+                {
+                  "when": {
+                    "field": "message",
+                    "equals": "hello"
+                  },
+                  "effect": "show",
+                  "target": "details"
+                }
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 200,
+            "examples": [
+              []
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_form_draft",
+      "productMcpToolName": "intakeforge_form_draft",
+      "productCliExample": "intakeforge action form-draft '{\"formId\":\"00000000-0000-4000-8000-000000000001\",\"title\":\"Contact request\",\"schema\":{\"version\":1,\"fields\":[{\"key\":\"message\",\"type\":\"short-text\",\"required\":true,\"purpose\":\"Respond to the inquiry.\",\"privacy\":\"internal\"}]},\"logic\":[]}'",
+      "exampleInput": {
+        "formId": "00000000-0000-4000-8000-000000000001",
+        "title": "Contact request",
+        "schema": {
+          "version": 1,
+          "fields": [
+            {
+              "key": "message",
+              "type": "short-text",
+              "required": true,
+              "purpose": "Respond to the inquiry.",
+              "privacy": "internal"
+            }
+          ]
+        },
+        "logic": []
+      }
+    },
+    {
+      "id": "schema-validate",
+      "moduleId": "forms",
+      "title": "Validate form schema",
+      "description": "Validate the exact draft schema vocabulary, stable keys, types, purposes, and bounds without mutation.",
+      "operation": "read",
+      "recordType": "form-release",
+      "requiredFields": [
+        "releaseId"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "releaseId"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form release UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_schema_validate",
+      "productMcpToolName": "intakeforge_schema_validate",
+      "productCliExample": "intakeforge action schema-validate '{\"releaseId\":\"00000000-0000-4000-8000-000000000001\"}'",
+      "exampleInput": {
+        "releaseId": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "id": "logic-validate",
+      "moduleId": "forms",
+      "title": "Validate form logic",
+      "description": "Validate exact-release references, typed effects, and acyclic reachability without executing code.",
+      "operation": "read",
+      "recordType": "form-release",
+      "requiredFields": [
+        "releaseId"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "releaseId"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form release UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_logic_validate",
+      "productMcpToolName": "intakeforge_logic_validate",
+      "productCliExample": "intakeforge action logic-validate '{\"releaseId\":\"00000000-0000-4000-8000-000000000001\"}'",
+      "exampleInput": {
+        "releaseId": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "id": "release-diff",
+      "moduleId": "forms",
+      "title": "Diff form release",
+      "description": "Return a deterministic semantic field diff against the preceding published release.",
+      "operation": "read",
+      "recordType": "form-release",
+      "requiredFields": [
+        "releaseId"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "releaseId"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form release UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_release_diff",
+      "productMcpToolName": "intakeforge_release_diff",
+      "productCliExample": "intakeforge action release-diff '{\"releaseId\":\"00000000-0000-4000-8000-000000000001\"}'",
+      "exampleInput": {
+        "releaseId": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "id": "release-publish",
+      "moduleId": "forms",
+      "title": "Publish form release",
+      "description": "Publish only the exact schema-and-logic content hash after complete deterministic validation.",
+      "operation": "command",
+      "recordType": "form-release",
+      "requiredFields": [
+        "releaseId",
+        "contentHash",
+        "idempotencyKey"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "releaseId",
+          "contentHash",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form release UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "contentHash": {
+            "type": "string",
+            "minLength": 64,
+            "description": "Lowercase SHA-256 digest of the exact reviewed content.",
+            "examples": [
+              "0000000000000000000000000000000000000000000000000000000000000000"
+            ],
+            "pattern": "^[a-f0-9]{64}$",
+            "maxLength": 64
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Caller-generated idempotency key for replay-safe mutation.",
+            "examples": [
+              "request.sample-0001"
+            ],
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_release_publish",
+      "productMcpToolName": "intakeforge_release_publish",
+      "productCliExample": "intakeforge action release-publish '{\"releaseId\":\"00000000-0000-4000-8000-000000000001\",\"contentHash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"idempotencyKey\":\"request.sample-0001\"}'",
+      "exampleInput": {
+        "releaseId": "00000000-0000-4000-8000-000000000001",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "idempotencyKey": "request.sample-0001"
+      }
+    },
+    {
+      "id": "submission-validate",
+      "moduleId": "forms",
+      "title": "Validate form submission",
+      "description": "Validate canonical answers server-side against the exact immutable release and its logic.",
+      "operation": "read",
+      "recordType": "submission",
+      "requiredFields": [
+        "releaseId",
+        "responseValues"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "releaseId",
+          "responseValues"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Published exact form release UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "responseValues": {
+            "type": "object",
+            "description": "Response values keyed by exact release field keys.",
+            "additionalProperties": true,
+            "examples": [
+              {
+                "message": "Please contact me."
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_submission_validate",
+      "productMcpToolName": "intakeforge_submission_validate",
+      "productCliExample": "intakeforge action submission-validate '{\"releaseId\":\"00000000-0000-4000-8000-000000000001\",\"responseValues\":{\"message\":\"Please contact me.\"}}'",
+      "exampleInput": {
+        "releaseId": "00000000-0000-4000-8000-000000000001",
+        "responseValues": {
+          "message": "Please contact me."
+        }
+      }
+    },
+    {
+      "id": "submission-create",
+      "moduleId": "forms",
+      "title": "Create form submission",
+      "description": "Finalize one exact-release submission idempotently after server-side validation.",
+      "operation": "command",
+      "recordType": "submission",
+      "requiredFields": [
+        "releaseId",
+        "responseValues",
+        "idempotencyKey"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "releaseId",
+          "responseValues",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Published exact form release UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "responseValues": {
+            "type": "object",
+            "description": "Response values keyed by exact release field keys.",
+            "additionalProperties": true,
+            "examples": [
+              {
+                "message": "Please contact me."
+              }
+            ]
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Caller-generated idempotency key for replay-safe mutation.",
+            "examples": [
+              "request.sample-0001"
+            ],
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "maxLength": 200
+          },
+          "respondentKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional respondent-local key hashed before storage.",
+            "examples": [
+              "respondent-123"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_submission_create",
+      "productMcpToolName": "intakeforge_submission_create",
+      "productCliExample": "intakeforge action submission-create '{\"releaseId\":\"00000000-0000-4000-8000-000000000001\",\"responseValues\":{\"message\":\"Please contact me.\"},\"idempotencyKey\":\"request.sample-0001\"}'",
+      "exampleInput": {
+        "releaseId": "00000000-0000-4000-8000-000000000001",
+        "responseValues": {
+          "message": "Please contact me."
+        },
+        "idempotencyKey": "request.sample-0001"
+      }
+    },
+    {
+      "id": "submission-get",
+      "moduleId": "forms",
+      "title": "Read form submission",
+      "description": "Read one tenant-owned submission with immutable release and correction lineage.",
+      "operation": "read",
+      "recordType": "submission",
+      "requiredFields": [
+        "submissionId"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "submissionId"
+        ],
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form submission UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_submission_get",
+      "productMcpToolName": "intakeforge_submission_get",
+      "productCliExample": "intakeforge action submission-get '{\"submissionId\":\"00000000-0000-4000-8000-000000000001\"}'",
+      "exampleInput": {
+        "submissionId": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "id": "submission-correct",
+      "moduleId": "forms",
+      "title": "Correct form submission",
+      "description": "Append an exact-release validated correction while preserving the original answer version.",
+      "operation": "command",
+      "recordType": "submission-version",
+      "requiredFields": [
+        "submissionId",
+        "responseValues",
+        "expectedVersion",
+        "reason"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "submissionId",
+          "responseValues",
+          "expectedVersion",
+          "reason"
+        ],
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form submission UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "responseValues": {
+            "type": "object",
+            "description": "Corrected response values keyed by exact release field keys.",
+            "additionalProperties": true,
+            "examples": [
+              {
+                "message": "Corrected response."
+              }
+            ]
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Current submission version.",
+            "examples": [
+              1
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Auditable correction reason.",
+            "examples": [
+              "Respondent corrected the answer."
+            ],
+            "maxLength": 2000
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_submission_correct",
+      "productMcpToolName": "intakeforge_submission_correct",
+      "productCliExample": "intakeforge action submission-correct '{\"submissionId\":\"00000000-0000-4000-8000-000000000001\",\"responseValues\":{\"message\":\"Corrected response.\"},\"expectedVersion\":1,\"reason\":\"Respondent corrected the answer.\"}'",
+      "exampleInput": {
+        "submissionId": "00000000-0000-4000-8000-000000000001",
+        "responseValues": {
+          "message": "Corrected response."
+        },
+        "expectedVersion": 1,
+        "reason": "Respondent corrected the answer."
+      }
+    },
+    {
+      "id": "results-query",
+      "moduleId": "forms",
+      "title": "Query form results",
+      "description": "Return a bounded aggregate result with an explicit denominator and query clock.",
+      "operation": "read",
+      "recordType": "submission",
+      "requiredFields": [
+        "formId"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "formId"
+        ],
+        "properties": {
+          "formId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_results_query",
+      "productMcpToolName": "intakeforge_results_query",
+      "productCliExample": "intakeforge action results-query '{\"formId\":\"00000000-0000-4000-8000-000000000001\"}'",
+      "exampleInput": {
+        "formId": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "id": "results-summarize",
+      "moduleId": "forms",
+      "title": "Summarize form results",
+      "description": "Produce a deterministic evidence-linked summary without inventing or exposing respondent facts.",
+      "operation": "read",
+      "recordType": "submission",
+      "requiredFields": [
+        "formId"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "formId"
+        ],
+        "properties": {
+          "formId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_results_summarize",
+      "productMcpToolName": "intakeforge_results_summarize",
+      "productCliExample": "intakeforge action results-summarize '{\"formId\":\"00000000-0000-4000-8000-000000000001\"}'",
+      "exampleInput": {
+        "formId": "00000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "id": "export-preview",
+      "moduleId": "forms",
+      "title": "Preview form export",
+      "description": "Freeze a bounded field projection and formula-protection plan before creating an export.",
+      "operation": "command",
+      "recordType": "export",
+      "requiredFields": [
+        "formId",
+        "fields",
+        "format"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "formId",
+          "fields",
+          "format"
+        ],
+        "properties": {
+          "formId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Zero to 200 selected form field keys; duplicates are accepted and deduplicated.",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Form field key.",
+              "examples": [
+                "sample-key"
+              ],
+              "pattern": "^[a-z][a-z0-9-]{1,79}$",
+              "maxLength": 80
+            },
+            "minItems": 0,
+            "maxItems": 200,
+            "examples": [
+              [
+                "message"
+              ]
+            ]
+          },
+          "format": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Form export format.",
+            "examples": [
+              "json"
+            ],
+            "enum": [
+              "json",
+              "csv"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_export_preview",
+      "productMcpToolName": "intakeforge_export_preview",
+      "productCliExample": "intakeforge action export-preview '{\"formId\":\"00000000-0000-4000-8000-000000000001\",\"fields\":[\"message\"],\"format\":\"json\"}'",
+      "exampleInput": {
+        "formId": "00000000-0000-4000-8000-000000000001",
+        "fields": [
+          "message"
+        ],
+        "format": "json"
+      }
+    },
+    {
+      "id": "export-create",
+      "moduleId": "forms",
+      "title": "Create form export",
+      "description": "Create only the exact reviewed export projection with idempotent content-hash confirmation.",
+      "operation": "command",
+      "recordType": "export",
+      "requiredFields": [
+        "exportId",
+        "contentHash",
+        "idempotencyKey"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "exportId",
+          "contentHash",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "exportId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Reviewed export preview UUID.",
+            "examples": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "format": "uuid"
+          },
+          "contentHash": {
+            "type": "string",
+            "minLength": 64,
+            "description": "Lowercase SHA-256 digest of the exact reviewed content.",
+            "examples": [
+              "0000000000000000000000000000000000000000000000000000000000000000"
+            ],
+            "pattern": "^[a-f0-9]{64}$",
+            "maxLength": 64
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Caller-generated idempotency key for replay-safe mutation.",
+            "examples": [
+              "request.sample-0001"
+            ],
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "write",
+      "backendMcpToolName": "forms_export_create",
+      "productMcpToolName": "intakeforge_export_create",
+      "productCliExample": "intakeforge action export-create '{\"exportId\":\"00000000-0000-4000-8000-000000000001\",\"contentHash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"idempotencyKey\":\"request.sample-0001\"}'",
+      "exampleInput": {
+        "exportId": "00000000-0000-4000-8000-000000000001",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "idempotencyKey": "request.sample-0001"
+      }
+    },
+    {
+      "id": "rights-preview",
+      "moduleId": "forms",
+      "title": "Preview respondent rights request",
+      "description": "Create a privacy-safe affected-record plan from a workspace-scoped respondent key digest.",
+      "operation": "read",
+      "recordType": "rights-request",
+      "requiredFields": [
+        "respondentKey"
+      ],
+      "engine": "legacy",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "respondentKey"
+        ],
+        "properties": {
+          "respondentKey": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Respondent-local key used only to derive a workspace-scoped digest.",
+            "examples": [
+              "respondent-123"
+            ],
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      },
+      "requiredScope": "read",
+      "backendMcpToolName": "forms_rights_preview",
+      "productMcpToolName": "intakeforge_rights_preview",
+      "productCliExample": "intakeforge action rights-preview '{\"respondentKey\":\"respondent-123\"}'",
+      "exampleInput": {
+        "respondentKey": "respondent-123"
+      }
+    }
+  ]
+}
