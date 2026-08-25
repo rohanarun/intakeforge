@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": {
-    "productVersion": "0.1.1",
+    "productVersion": "0.2.0",
     "backendRelease": "v0.4.2",
     "backendCommit": "20c4a704c77cbbbff1da995e1d91b937625a8aa4",
     "backendSourceSnapshotSha256": "d0b7b1079d4924eb7369c788a979a707d45bb63470290e6ac33ee5662d78f69f",
@@ -58,6 +58,175 @@
   "cleanRoom": {
     "statement": "Original clean-room implementation of the data collection software category, designed and written independently.",
     "sourceBoundary": "Public category behavior informed requirements; implementation and product identity are original."
+  },
+  "experience": {
+    "releaseBoundary": "Complete for every typed action declared by this product manifest; it does not claim feature parity with unrelated third-party products.",
+    "headline": "Accessible versioned forms with deterministic logic",
+    "primaryActionId": "form-create",
+    "quickActionIds": [
+      "form-create",
+      "form-list",
+      "form-draft",
+      "schema-validate"
+    ],
+    "navigation": [
+      "Overview",
+      "Records",
+      "Workflows",
+      "AI assistance",
+      "Settings"
+    ],
+    "workflowGroups": [
+      {
+        "name": "Create and capture",
+        "actionIds": [
+          "form-create",
+          "form-draft",
+          "schema-validate",
+          "submission-create",
+          "export-create"
+        ]
+      },
+      {
+        "name": "Review and approve",
+        "actionIds": [
+          "logic-validate",
+          "release-diff",
+          "release-publish",
+          "submission-validate",
+          "submission-get",
+          "submission-correct",
+          "export-preview",
+          "rights-preview"
+        ]
+      },
+      {
+        "name": "Inspect and report",
+        "actionIds": [
+          "form-list",
+          "results-query",
+          "results-summarize"
+        ]
+      }
+    ],
+    "metrics": [
+      {
+        "label": "Typed actions",
+        "value": 16
+      },
+      {
+        "label": "Record types",
+        "value": 7
+      },
+      {
+        "label": "AI workflows",
+        "value": 0
+      },
+      {
+        "label": "Review gates",
+        "value": 8
+      }
+    ],
+    "sampleRecords": [
+      {
+        "id": "demo-forms-01",
+        "moduleId": "forms",
+        "recordType": "form",
+        "title": "Form Launch",
+        "state": "active",
+        "createdAt": "2026-08-18T13:30:00.000Z",
+        "updatedAt": "2026-08-25T13:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "verified",
+          "nextStep": "Create form"
+        }
+      },
+      {
+        "id": "demo-forms-02",
+        "moduleId": "forms",
+        "recordType": "form-release",
+        "title": "Form Release Operations",
+        "state": "in review",
+        "createdAt": "2026-08-19T13:30:00.000Z",
+        "updatedAt": "2026-08-25T12:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "current",
+          "nextStep": "List forms"
+        }
+      },
+      {
+        "id": "demo-forms-03",
+        "moduleId": "forms",
+        "recordType": "submission",
+        "title": "Submission Evidence",
+        "state": "ready",
+        "createdAt": "2026-08-20T13:30:00.000Z",
+        "updatedAt": "2026-08-25T11:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "current",
+          "nextStep": "Draft form release"
+        }
+      },
+      {
+        "id": "demo-forms-04",
+        "moduleId": "forms",
+        "recordType": "submission-version",
+        "title": "Submission Version Review",
+        "state": "scheduled",
+        "createdAt": "2026-08-21T13:30:00.000Z",
+        "updatedAt": "2026-08-25T10:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "verified",
+          "nextStep": "Validate form schema"
+        }
+      },
+      {
+        "id": "demo-forms-05",
+        "moduleId": "forms",
+        "recordType": "result-view",
+        "title": "Result View Pilot",
+        "state": "draft",
+        "createdAt": "2026-08-22T13:30:00.000Z",
+        "updatedAt": "2026-08-25T09:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "current",
+          "nextStep": "Validate form logic"
+        }
+      },
+      {
+        "id": "demo-forms-06",
+        "moduleId": "forms",
+        "recordType": "export",
+        "title": "Export Archive",
+        "state": "complete",
+        "createdAt": "2026-08-23T13:30:00.000Z",
+        "updatedAt": "2026-08-25T08:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "current",
+          "nextStep": "Diff form release"
+        }
+      },
+      {
+        "id": "demo-forms-07",
+        "moduleId": "forms",
+        "recordType": "rights-request",
+        "title": "Rights Request Launch",
+        "state": "active",
+        "createdAt": "2026-08-24T13:30:00.000Z",
+        "updatedAt": "2026-08-25T07:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "verified",
+          "nextStep": "Publish form release"
+        }
+      }
+    ]
   },
   "actions": [
     {
