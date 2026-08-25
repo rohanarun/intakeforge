@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:02,250
+Explore the IntakeForge Forms workspace overview dashboard.
+
+2
+00:00:02,250 --> 00:00:05,375
+Connect the browser session to the backend workspace.
+
+3
+00:00:05,375 --> 00:00:07,875
+Open the form creation dialog and enter the form name.
+
+4
+00:00:07,875 --> 00:00:10,375
+Execute the workflow to create the form and review the output.
+
+5
+00:00:10,375 --> 00:00:17,000
+Navigate to Records and inspect the newly created draft form record.

@@ -1,0 +1,169 @@
+{
+  "schema": "managed-oss-functional-tutorial.v1",
+  "product": {
+    "slug": "intakeforge",
+    "name": "IntakeForge",
+    "moduleId": "forms",
+    "version": "0.3.1",
+    "manifestSha256": "04483540c3b69b1bc8603574718fb319f81ef2b6ba2f0e8e4880d13329ba2be8"
+  },
+  "backend": {
+    "release": "v0.4.4",
+    "commit": "148abce99b91d8b9fdc8aa41c3f0eba283796db4"
+  },
+  "testedAt": "2026-08-25T21:56:11.375Z",
+  "browser": {
+    "engine": "Chromium",
+    "version": "151.0.7922.174",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "functionalProof": {
+    "action": {
+      "id": "form-create",
+      "title": "Create form",
+      "httpStatus": 200
+    },
+    "record": {
+      "id": "161a941d-4645-4699-9e01-fbbd88128f34",
+      "recordType": "form",
+      "title": "IntakeForge tutorial workspace",
+      "state": "draft"
+    },
+    "detail": {
+      "httpStatus": 200,
+      "matched": true
+    },
+    "assertions": [
+      "browser-authenticated-real-backend",
+      "guided-form-submitted",
+      "action-http-200",
+      "durable-record-returned",
+      "record-detail-http-200",
+      "exact-record-reopened-in-ui"
+    ]
+  },
+  "timeline": [
+    {
+      "stepId": "overview",
+      "observedLabel": "Meet IntakeForge",
+      "observedFact": "Open the real IntakeForge workspace and identify its core workflow.",
+      "startMs": 0,
+      "endMs": 2250
+    },
+    {
+      "stepId": "connect",
+      "observedLabel": "Connect the workspace",
+      "observedFact": "Authenticate this browser to the isolated shared backend and load durable records.",
+      "startMs": 2250,
+      "endMs": 5375
+    },
+    {
+      "stepId": "configure",
+      "observedLabel": "Create form",
+      "observedFact": "Complete the guided, contract-validated form for the product's primary workflow.",
+      "startMs": 5375,
+      "endMs": 7875
+    },
+    {
+      "stepId": "execute",
+      "observedLabel": "Run the real workflow",
+      "observedFact": "Submit the action to the shared backend and require a successful durable result.",
+      "startMs": 7875,
+      "endMs": 10375
+    },
+    {
+      "stepId": "inspect",
+      "observedLabel": "Inspect the saved record",
+      "observedFact": "Search the product record view and reopen the exact record returned by the workflow.",
+      "startMs": 10375,
+      "endMs": 17000
+    }
+  ],
+  "explanation": {
+    "title": "Creating a Form in IntakeForge",
+    "summary": "Learn how to connect your IntakeForge workspace, configure a new form, execute the workflow, and verify the resulting draft record.",
+    "cues": [
+      {
+        "stepId": "overview",
+        "startMs": 0,
+        "endMs": 2250,
+        "label": "Meet IntakeForge",
+        "subtitle": "Explore the IntakeForge Forms workspace overview dashboard."
+      },
+      {
+        "stepId": "connect",
+        "startMs": 2250,
+        "endMs": 5375,
+        "label": "Connect workspace",
+        "subtitle": "Connect the browser session to the backend workspace."
+      },
+      {
+        "stepId": "configure",
+        "startMs": 5375,
+        "endMs": 7875,
+        "label": "Configure form details",
+        "subtitle": "Open the form creation dialog and enter the form name."
+      },
+      {
+        "stepId": "execute",
+        "startMs": 7875,
+        "endMs": 10375,
+        "label": "Run creation workflow",
+        "subtitle": "Execute the workflow to create the form and review the output."
+      },
+      {
+        "stepId": "inspect",
+        "startMs": 10375,
+        "endMs": 17000,
+        "label": "Inspect saved record",
+        "subtitle": "Navigate to Records and inspect the newly created draft form record."
+      }
+    ],
+    "generation": {
+      "provider": "OpenRouter",
+      "model": "google/gemini-3.7-flash",
+      "requestedModel": "google/gemini-3.7-flash",
+      "responseModel": "google/gemini-3.7-flash",
+      "responseId": "gen-1787694965-Hzf9jc0qWJSbWJgUBOLv",
+      "responseCreatedAt": "2026-08-25T21:56:05.000Z",
+      "input": {
+        "rawVideoSha256": "4154230d19acdeb8e48cd7efff885e39774af8d6be8f7bccec0e9e79f2c82c5e",
+        "workflowFactsSha256": "d2a1b712afa13a476cec2870acdcb66505024ae877cc91c2e30f4a6bb75b27d7"
+      },
+      "usage": {
+        "promptTokens": 1561,
+        "completionTokens": 838,
+        "totalTokens": 2399
+      }
+    }
+  },
+  "video": {
+    "raw": {
+      "sha256": "4154230d19acdeb8e48cd7efff885e39774af8d6be8f7bccec0e9e79f2c82c5e",
+      "codec": "h264",
+      "width": 1280,
+      "height": 720,
+      "durationSeconds": 17,
+      "sizeBytes": 342459
+    },
+    "final": {
+      "file": "docs/tutorial.mp4",
+      "sha256": "9fbadb6dd7188c2bab1129064510755b4fd24bd9d121b125d305b00fc3b40f1b",
+      "codec": "h264",
+      "width": 1280,
+      "height": 720,
+      "durationSeconds": 17,
+      "sizeBytes": 371088
+    },
+    "subtitles": {
+      "file": "docs/tutorial.srt",
+      "sha256": "f18fd6d870468e6fb4072cabfe2f46cf7eac57912ddefdece4527f04be89a0c4",
+      "format": "SubRip"
+    },
+    "overlaysBurnedIn": true,
+    "silent": true
+  }
+}
